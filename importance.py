@@ -13,8 +13,7 @@ backup_data_mb = 0
 
 #socket通信でデータを送信する
 def send_data(data):
-    #host = '192.168.100.229'
-    host = '192.168.59.128'
+    host = 'ip_address'
     port = 12345
 
     #socket通信の開始
@@ -82,7 +81,7 @@ def get_data(host, port):
 #バックアップ操作
 def start_buckup(data_lst):
     #バックアップサーバの容量の30%
-    limit_capacity = 85360.02346418943
+    limit_capacity = float(data_lst[-2][0])
     #float(data_lst[-2][0])
     #バックアップサーバの使用可能容量
     capacity_mb = float(data_lst[-1][0])
@@ -98,25 +97,17 @@ def start_buckup(data_lst):
         if len(data) > 1:
             #フォルダのパス
             folder_path = data[0]
-            #バックアップサーバ側で圧縮されていればFalse
-            #dest_status = data[-1]
             #バックアップの1つのデータサイズ
             data_size = data[2]
 
             #バックアップサーバの容量の70%に収まっていれば
             if capacity_mb + add_data_size < limit_capacity:
                 print(f"現在のcapacity_mb:{capacity_mb}MB")
-                print("!!!")
-
-                #②バックアップサーバ側で圧縮されているかどうか
-                #if dest_status:
                 #非圧縮で送信
                 print(os.path.exists(folder_path))
                 data_transfer(folder_path)
-                #else:#バックアップサーバ側のものを圧縮するようにする
                 
             else:
-                print("???")
                 #圧縮して送信
                 # 圧縮後のZIPファイル
                 zip_file_path = folder_path + ".zip"
@@ -130,17 +121,16 @@ def start_buckup(data_lst):
                     #増分バックアップ分を圧縮したバージョンに変更する
                     add_data_size -= get_directory_size(folder_path)
                     add_data_size += os.path.getsize(zip_file_path) / (1024 * 1024)
-                else:
-                    print(f"")
+
                 data_transfer(zip_file_path)
 
 
 #scpでデータを送信
 def data_transfer(local_folder_path):
-    remote_folder_path = "/home/c0a21021/CDSL2/"
-    user = "c0a21021"
-    #host = "192.168.100.229"
-    host = '192.168.59.128'
+    #バックアップデータを保存するディレクトリを指定
+    remote_folder_path = "/home/"
+    user = "user_name"
+    host = 'ip_address'
 
     # `scp -r`コマンドを実行
     scp_command = f"scp -r {local_folder_path} {user}@{host}:{remote_folder_path}"
@@ -163,8 +153,10 @@ def compress_directory(directory_path, zip_path):
 
 
 if __name__ == "__main__":
-    base_directory = 'C:/Users/admin/Documents/CDSL/file_server/'
-    csv_folder = 'C:/Users/admin/Documents/CDSL/test_zisso/importance_csv'
+    #重要度を決定したフォルダのあるディレクトリ
+    base_directory = './'
+    #重要度を決定するCSVを保存するディレクトリを指定
+    csv_folder = './importance_csv'
     csv_file_lst = file_list = [f for f in os.listdir(csv_folder) if os.path.isfile(os.path.join(csv_folder, f))]
     #1週間分のアクセス・更新回数を保存する変数
     total_access = 0
@@ -174,7 +166,6 @@ if __name__ == "__main__":
     total_data_size = 0
     host = '192.168.100.102'
     port = 56789
-    excel_file = "C:/Users/admin/Documents/CDSL/test_zisso/wbs01.xlsx"
 
     #csvフォルダからアクセス回数，更新回数の平均を計算
     for csv_file_path in csv_file_lst[-6:-2]:
