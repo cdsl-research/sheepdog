@@ -95,7 +95,8 @@ def send_data(data):
 #対象フォルダが圧縮されているかどうかの確認
 #Trueの場合，非圧縮状態
 def Check_compression(folder_path):
-    base_path = "/home/c0a21021/CDSL/"
+    #バックアップサーバ（VM）内のディレクトリを指定
+    base_path = "/home/"
     directories = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
     new_folder_path = ""
 
@@ -114,7 +115,7 @@ def Check_compression(folder_path):
 
 
 if __name__ == "__main__":
-    host = '192.168.100.229'  # クライアント側のIPアドレス
+    host = 'ip_address'  # クライアント側のIPアドレス
     port = 12345              # クライアント側のポート番号
     dir_path = "./"
     #バックアップサーバの使用可能容量の取得
