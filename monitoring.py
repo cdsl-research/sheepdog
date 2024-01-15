@@ -48,6 +48,7 @@ class DirectoryHandler(FileSystemEventHandler):
 
             #バイナリで変更された記録があれば
             if is_binary(event.src_path):
+                #初めての更新イベント
                 #イベントファイルが変わったら回数を増やすようにする
                 if (check_update_flag == False) and (check_file_name != self.file_name):
                     self.file_changes += 1
@@ -59,15 +60,6 @@ class DirectoryHandler(FileSystemEventHandler):
                 elif check_update_flag and (check_file_name == self.file_name):
                     check_update_flag = False
                 
-                #初めての更新イベント
-                '''
-                else:
-                    self.file_changes += 1
-                    directory_name = os.path.basename(self.directory_path)
-                    folder_dict[directory_name][0] += 1
-                    check_update_flag = True
-                    #folder_dict[directory_name][1] -= 1
-                '''
                 print(check_file_name)
             else:
                 self.file_changes += 1
@@ -168,12 +160,13 @@ def csv_file_write(csv_file, df):
 
 
 if __name__ == "__main__":
-    base_path = "C:/Users/admin/Documents/CDSL/file_server/"
+    #監視するディレクトリを指定
+    base_path = "./"
     directories = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
     print(directories)
 
     #監視結果を書き込むcsvファイル
-    csv_file = "C:/Users/admin/Documents/CDSL/test_zisso/importance_csv/day6.csv"
+    csv_file = "./importance_csv/day1.csv"
 
     #最初の1行を書き込む
     data = {"フォルダ名":[], "アクセス回数":[],"更新回数":[]}
